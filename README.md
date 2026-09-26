@@ -11,24 +11,28 @@ JevBench is [Benchmark Heaven](https://benchmarkheaven.com)'s own benchmark. It 
 affiliated with or endorsed by TypeSafe AI, whose Jev model is one of the systems
 measured here.
 
-## v1.4.2: eleven new systems and a new #1 (current)
+## v1.4.2.1: Plumb-4B takes the top spot (current)
 
-**[Live board](https://benchmarkheaven.com/jev-models)** · [v1.4.2 release notes](docs/RELEASE-v1.4.2.md) ·
-[v1.4 method](docs/METHOD-v1.4.md) · [aggregate results](results/v1.4.2/jevbench-v1.4.2-results.json) · [changelog](CHANGELOG.md)
+**[Live board](https://benchmarkheaven.com/jev-models)** · [v1.4.2.1 release notes](docs/RELEASE-v1.4.2.1.md) ·
+[v1.4 method](docs/METHOD-v1.4.md) · [aggregate results](results/v1.4.2.1/jevbench-v1.4.2.1-results.json) · [changelog](CHANGELOG.md)
 
 The official score blends 20% chance-corrected Intelligence from 308 fresh sealed decisions with 80% of the v1.3.0 Intelligence axis. Calibration is blended toward the sealed-inclusive measurement. The four axes use an equal-weight harmonic mean. A public-to-sealed accuracy gap above 25 percentage points reduces Intelligence; the existing low-Intelligence penalty remains, and Speed and Cost each receive a quadratic gate below 50.
 
 | Rank | System | JevBench Score |
 |---:|---|---:|
-| 1 | decider-4b v2 (Mapika) | 64.13 |
-| 2 | Jev 1.13.0 (TypeSafe AI) | 63.29 |
-| 3 | JevK5 v0.2.0 | 62.04 |
-| 4 | Cygnet (blockbrain, frozen Gemma-4-12B-it) | 61.76 |
-| 5 | Hopper | 59.43 |
+| 1 | Plumb-4B (crh225, JevK5 v0.2 + LoRA) | 65.84 |
+| 2 | decider-4b v2 (Mapika) | 64.13 |
+| 3 | Jev 1.13.0 (TypeSafe AI) | 63.29 |
+| 4 | JevK5 v0.2.0 | 62.04 |
+| 5 | Cygnet (blockbrain, frozen Gemma-4-12B-it) | 61.76 |
 
-Jev 1.13.0 out-reasons decider-4b v2 (Intelligence 53.1 vs 49.4) and is better calibrated; decider-4b v2 leads on speed and cost. JevBench weighs the four axes equally; sort by Intelligence for raw reasoning.
+Plumb-4B takes the highest equal-weight composite. Jev 1.13.0 out-reasons decider-4b v2 (Intelligence 53.1 vs 49.4) and is better calibrated; decider-4b v2 leads on speed and cost. JevBench weighs the four axes equally; sort by Intelligence for raw reasoning.
 
-v1.4.2 adds eleven systems and swanOne's completed sealed run to the v1.4.1 board: 93 systems, 89 ranked. The scoring formula and every v1.4.1 measurement are unchanged. Systems without a public, bookable price carry a labelled estimate from their base model's public price. Only aggregates are published for the sealed items. Rows with an **API** flag identify operator endpoints that received the item text without answer keys. The public half can be trained on or selected against, so the held-out private part will need to evolve as the field changes.
+v1.4.2.1 adds Plumb-4B to the live v1.4.2 baseline: 94 systems, 90 ranked. The v1.4.2 scorer and prior measurements are unchanged; ranks move only where the added row changes the order. Plumb's estimated Cost uses the bookable EmpirioLabs Qwen3.5-4B input rate of $0.04/M, not a GPU bill. Only aggregates are published for the sealed items. Rows with an **API** flag identify operator endpoints that received item text without answer keys. The public half can be trained on or selected against, so the held-out private part will need to evolve as the field changes.
+
+## v1.4.2: eleven new systems and swanOne's sealed run
+
+[v1.4.2 release notes](docs/RELEASE-v1.4.2.md) · [aggregate results](results/v1.4.2/jevbench-v1.4.2-results.json)
 
 ## v1.4.1: six completed additions to the v1.4 board
 

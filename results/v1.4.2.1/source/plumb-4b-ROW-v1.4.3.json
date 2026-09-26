@@ -1,0 +1,291 @@
+{
+  "generated_utc": "2026-09-25T04:44:19+00:00",
+  "status": "official v1.4.3 addition row (v1.4 scorer, ranked against the published v1.4.2 board); not yet published",
+  "key": "plumb-4b",
+  "display": "Plumb-4B (crh225, JevK5 v0.2 + LoRA)",
+  "author": "crh225",
+  "repo": "https://github.com/crh225/plumb",
+  "class": "jev-rebuild",
+  "ranked": true,
+  "api_flag": false,
+  "licence": "Apache-2.0 (weights and code; NOTICE credits JevK5, Qwen and SemIf); base Qwen3.5-4B Apache-2.0",
+  "source": "v1.4.3 addition (official offline measurement, 25 Sep 2026, jevbench-add-requests run 14)",
+  "note": "crh225/plumb-4b @ 55de037801a8a9b9de3db5c0e16cef86210c2186: merged bf16 weights, LoRA r16 on the attention projections of JevK5 v0.2 (itself Qwen3.5-4B), served by the author's documented command, jevk5 v0.2.0's own jevk5-serve (github.com/allebee/jevk5, Apache-2.0), unmodified. One forward pass per decision: softmax over the declared options' answer-letter logits at the last position divided by the package's own T = 2.07 (jevk5_config.json), up to 16 options, 0 generated tokens; inputs over 16,384 tokens are refused rather than truncated. Disclosed by the author: no JevBench item was trained or tuned on and every checkpoint and temperature choice came from his own held-out sets, but the 231 public items were scored after each of five training rounds and that aggregate feedback shaped the recipe (hard mining, long documents, document length) — development against the public distribution, stated plainly. His own overlap audit dropped 9 training items sharing more than two 8-word spans with a public item.",
+  "note_v14": "Offline self-hosted inference of all 842 decisions (534 frozen v1.2 + 308 sealed v1.4) in a network-disabled, read-only container on an evaluator-owned Lium H100 80 GB (Hopper) pod, through JevBench's unchanged typesafe adapter against the author's own server on loopback; no operator endpoint; no golds were exposed. Latency is the serial request wall time on the standard+judge items with the self-hosted adjustment. Cost is a labelled estimate: DeepInfra Qwen/Qwen3.5-4B list price $0.03/M input (the exact base weights; one pass, no output tokens), read 2026-09-25, over the server's own usage.input_tokens; it is not a GPU bill.",
+  "v130": {
+    "score": 79.73357327525596,
+    "rank": 1,
+    "axes": {
+      "intelligence": 87.17992461659533,
+      "calibration": 83.31697247551787,
+      "speed": 93.49040479933188,
+      "cost": 59.517941238875515
+    },
+    "tiers": {
+      "easy": 1.0,
+      "standard": 0.9791666666666666,
+      "judge": 0.952054794520548,
+      "hard": 0.7772727272727272
+    }
+  },
+  "public_acc": 0.8961038961038961,
+  "public_n": 231,
+  "public_hard_acc": 0.8018018018018018,
+  "heldout_hard_acc_v12": 0.7522935779816514,
+  "sealed_acc": 0.37987012987012986,
+  "sealed": {
+    "n": 308,
+    "attempted": 308,
+    "answered_valid": 308,
+    "failed_or_invalid": 0,
+    "by_family": {
+      "ambiguous_abstain": {
+        "correct": 22,
+        "n": 37,
+        "accuracy": 0.5945945945945946
+      },
+      "judge_hard": {
+        "correct": 12,
+        "n": 41,
+        "accuracy": 0.2926829268292683
+      },
+      "long_policy": {
+        "correct": 12,
+        "n": 40,
+        "accuracy": 0.3
+      },
+      "multi_hop": {
+        "correct": 16,
+        "n": 38,
+        "accuracy": 0.42105263157894735
+      },
+      "paraphrase_robustness": {
+        "correct": 6,
+        "n": 14,
+        "accuracy": 0.42857142857142855
+      },
+      "probability": {
+        "correct": 8,
+        "n": 28,
+        "accuracy": 0.2857142857142857
+      },
+      "safety_judge": {
+        "correct": 5,
+        "n": 16,
+        "accuracy": 0.3125
+      },
+      "temporal_numeric": {
+        "correct": 21,
+        "n": 56,
+        "accuracy": 0.375
+      },
+      "tradeoff": {
+        "correct": 9,
+        "n": 26,
+        "accuracy": 0.34615384615384615
+      },
+      "trap_adversarial": {
+        "correct": 6,
+        "n": 12,
+        "accuracy": 0.5
+      }
+    },
+    "by_panel_stratum": {
+      "0/3": {
+        "correct": 20,
+        "n": 109,
+        "accuracy": 0.1834862385321101
+      },
+      "1/3": {
+        "correct": 32,
+        "n": 97,
+        "accuracy": 0.32989690721649484
+      },
+      "2/3": {
+        "correct": 65,
+        "n": 102,
+        "accuracy": 0.6372549019607843
+      }
+    },
+    "ece": 0.28215403489574986,
+    "mean_tvd_gold_probs": 0.23924419273418004,
+    "calibration": 59.82238687371601,
+    "label_only": false,
+    "risk_coverage": {
+      "conf>=0.7": {
+        "coverage": 0.44805194805194803,
+        "accuracy": 0.42028985507246375,
+        "n": 138
+      },
+      "conf>=0.9": {
+        "coverage": 0.20454545454545456,
+        "accuracy": 0.47619047619047616,
+        "n": 63
+      }
+    },
+    "results_location": "private sealed run directory (not published)"
+  },
+  "v14": {
+    "score": 69.1304355453705,
+    "rank": 1,
+    "axes": {
+      "intelligence": 58.96297439648504,
+      "calibration": 69.61179754113346,
+      "speed": 93.49040479933188,
+      "cost": 59.517941238875515
+    },
+    "tiers": {
+      "easy": 1.0,
+      "standard": 0.9791666666666666,
+      "judge": 0.952054794520548,
+      "hard_public": 0.8018018018018018,
+      "hard_heldout": 0.7522935779816514,
+      "sealed": 0.37987012987012986
+    }
+  },
+  "release_score": {
+    "score": 67.09050191888983,
+    "rank": 1,
+    "axes": {
+      "intelligence": 52.97892668438094,
+      "calibration": 75.48544394158392,
+      "speed": 93.49040479933188,
+      "cost": 59.517941238875515
+    },
+    "scoring_module": "/home/flori/jobs/jevbench-v14-release-20260923/repo/jevbench/composite_v14.py",
+    "scoring_module_sha256": "33177d06eab9f78667972ec3b20997344f70a78e16b05326453a2c31200cac79",
+    "board_sha256": "ac14e206dde51ae28e40dc1ea2ff1fecc4a449b941d098e9ecb5618bd533e5be"
+  },
+  "measurements": {
+    "scope_counts": {
+      "public-source": 377,
+      "historical-private": 157,
+      "current-sealed": 308
+    },
+    "scope_accuracy": {
+      "public-source": {
+        "correct": 346,
+        "n": 377,
+        "valid": 377,
+        "accuracy": 0.9177718832891246,
+        "valid_rate": 1.0
+      },
+      "historical-private": {
+        "correct": 130,
+        "n": 157,
+        "valid": 157,
+        "accuracy": 0.8280254777070064,
+        "valid_rate": 1.0
+      },
+      "current-sealed": {
+        "correct": 117,
+        "n": 308,
+        "valid": 308,
+        "accuracy": 0.37987012987012986,
+        "valid_rate": 1.0
+      }
+    },
+    "old_tier_metrics": {
+      "easy": {
+        "correct": 72,
+        "n": 72,
+        "valid": 72,
+        "accuracy": 1.0,
+        "valid_rate": 1.0
+      },
+      "standard": {
+        "correct": 94,
+        "n": 96,
+        "valid": 96,
+        "accuracy": 0.9791666666666666,
+        "valid_rate": 1.0
+      },
+      "judge": {
+        "correct": 139,
+        "n": 146,
+        "valid": 146,
+        "accuracy": 0.952054794520548,
+        "valid_rate": 1.0
+      },
+      "hard": {
+        "correct": 171,
+        "n": 220,
+        "valid": 220,
+        "accuracy": 0.7772727272727272,
+        "valid_rate": 1.0
+      }
+    },
+    "official_public_accuracy": {
+      "correct": 207,
+      "n": 231,
+      "valid": 231,
+      "accuracy": 0.8961038961038961,
+      "valid_rate": 1.0
+    },
+    "old_public_hard": {
+      "correct": 89,
+      "n": 111,
+      "valid": 111,
+      "accuracy": 0.8018018018018018,
+      "valid_rate": 1.0
+    },
+    "old_historical_private_hard": {
+      "correct": 82,
+      "n": 109,
+      "valid": 109,
+      "accuracy": 0.7522935779816514,
+      "valid_rate": 1.0
+    },
+    "hard_ece": 0.07352480288933626,
+    "hard_mean_tvd": 0.18661094471096992,
+    "hard_tvd_n": 20,
+    "old_speed": {
+      "n": 242,
+      "p50_raw_s": 0.016472740564495325,
+      "p95_raw_s": 0.04735108860768378,
+      "p50_adjusted_s": 0.18294548112899064,
+      "p95_adjusted_s": 0.24470217721536755,
+      "axis": 93.49040479933188,
+      "basis": "serial standard+judge requests through the typesafe adapter to the author's server on loopback inside the offline container, H100 80 GB (Hopper), all 842 items serially; own-GPU adjustment ×2 + 0.15 s"
+    },
+    "cost": {
+      "input_tokens_old_534": 397944,
+      "output_tokens_old_534": 0,
+      "usd_per_1000_estimate": 0.02235640449438202,
+      "cost_axis": 59.517941238875515,
+      "input_usd_per_m": 0.03,
+      "output_usd_per_m": 0.0,
+      "basis": "ESTIMATE: DeepInfra Qwen/Qwen3.5-4B list price $0.03/M input (the exact base weights; one pass, no output tokens), read 2026-09-25; the server's own usage.input_tokens; nothing generated; estimated, not charged"
+    },
+    "noul_by_scope": {
+      "frozen_534": {
+        "n": 195,
+        "correct": 178,
+        "false_listed_first": 195
+      },
+      "sealed_308": {
+        "n": 87,
+        "correct": 33,
+        "false_listed_first": 0
+      }
+    },
+    "failed_by_status": {},
+    "calibration_blend": {
+      "old_hard_and_sealed_weight": 0.5833333333333334,
+      "release_composite_reblend_weight": 0.5714285714285715,
+      "old_calibration": 83.31697247551787,
+      "sealed_calibration": 59.82238687371601,
+      "preliminary_comparison_calibration": 69.61179754113346,
+      "release_scored_calibration": 75.48544394158392
+    }
+  },
+  "runtime": {
+    "pod_ledger": "GPU-POD-LEDGER.jsonl",
+    "stage_receipt": "logs/stage-*.txt",
+    "isolation_probe": "logs/stage-*.txt (probe-<system>.json: no route, no DNS, lo only, read-only root)",
+    "container": "docker --network none --read-only --cap-drop ALL, empty env, one read-only input mount"
+  },
+  "raw_results_sha256": "293fbc168a47a44f86705c1ed281e395763468ff0b06b3ea6f54a7248aba2286",
+  "input_sha256": "6b06782a8a9fadfae770cf88985ec188f3244f01510e9b3f15b34c9723937cfc",
+  "scope_note": "The requested existing 534 decisions contain 377 public-source items and 157 historical private holdouts. The v1.4 public-gap accuracy follows the release code's 231-ID public subset; all 377 public-source items are separately reported. The current sealed set contains 308 items."
+}
