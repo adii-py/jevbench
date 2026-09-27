@@ -14,7 +14,11 @@ DATA = ROOT / "results" / "v1.4.2.1"
 BASE = DATA / "base-live-v1.4.2-results.json"
 SOURCE = DATA / "source" / "plumb-4b-ROW-v1.4.3.json"
 PRICED_ROW = DATA / "source" / "plumb-4b-latest-v1.4.3-public-row.json"
+AGGREGATE_SOURCE = DATA / "source" / "plumb-4b-AGGREGATE-SOURCE-v1.4.3.json"
+FOOTNOTE_SOURCE = DATA / "source" / "plumb-4b-footnote.txt"
 OUTPUT = DATA / "jevbench-v1.4.2.1-results.json"
+BASE_FAMILIES = DATA / "base-live-v1.4.2-family-supplement.json"
+FAMILIES_OUTPUT = DATA / "jevbench-v1.4.2.1-family-supplement.json"
 BASE_SHA256 = "fb81f4e774e7a965eff7b5bed641cff62c7e51c9b28464dca83d5d7725990fcd"
 SCORER_SHA256 = "33177d06eab9f78667972ec3b20997344f70a78e16b05326453a2c31200cac79"
 EXPECTED_TOP5 = ["plumb-4b", "decider-4b-v2", "jev-1.13.0", "jevk5-v02", "cygnet"]
@@ -38,10 +42,14 @@ def build() -> dict:
     base = json.loads(base_bytes)
     source = read(SOURCE)
     priced = read(PRICED_ROW)
+    aggregate_bytes = AGGREGATE_SOURCE.read_bytes()
     if base.get("revision") != "v1.4.2" or len(base.get("systems", [])) != 93:
         raise ValueError("unexpected live v1.4.2 baseline")
     if source.get("key") != "plumb-4b" or priced.get("key") != "plumb-4b":
         raise ValueError("expected the Plumb-4B measurement and price-corrected row")
+    expected_aggregate_sha = priced["release_evidence"]["aggregate_source_sha256"]
+    if hashlib.sha256(aggregate_bytes).hexdigest() != expected_aggregate_sha:
+        raise ValueError("Plumb aggregate source does not match the priced public-row receipt")
     if any(row.get("key") == "plumb-4b" for row in base["systems"]):
         raise ValueError("Plumb-4B already exists in the live baseline")
 
@@ -71,6 +79,8 @@ def build() -> dict:
     )
 
     artifact = copy.deepcopy(base)
+    footnotes = copy.deepcopy(base.get("footnotes", {}))
+    footnotes["plumb-4b"] = FOOTNOTE_SOURCE.read_text().strip()
     artifact.update(
         revision="v1.4.2.1",
         status="final",
@@ -85,6 +95,7 @@ def build() -> dict:
             "Jev 1.13.0 remains ahead of decider-4b v2 on Intelligence and Calibration; decider-4b v2 "
             "leads on Speed and Cost. Sort by Intelligence to compare raw reasoning."
         ),
+        footnotes=footnotes,
         systems=artifact["systems"] + [row],
         revision_log=base["revision_log"] + [
             {
@@ -133,6 +144,20 @@ def build() -> dict:
             raise ValueError(f"existing non-rank fields changed for {item['key']}")
 
     OUTPUT.write_text(json.dumps(artifact, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
+    families = read(BASE_FAMILIES)
+    if families.get("revision") != "v1.4.2" or families.get("kind") != "family-supplement":
+        raise ValueError("unexpected live v1.4.2 family supplement")
+    families.update(
+        revision="v1.4.2.1",
+        created_utc=artifact["generated_utc"],
+        base_artifact_sha256=BASE_SHA256,
+        note=(
+            "Carries forward the v1.4.2 hard-family aggregates unchanged. Plumb-4B's sealed "
+            "family aggregates are in the main result artifact; no per-family 220-item hard-tier "
+            "breakdown was available for the Plumb row."
+        ),
+    )
+    FAMILIES_OUTPUT.write_text(json.dumps(families, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
     print(f"Built {len(artifact['systems'])} systems; {len(ranked)} ranked")
     print("Top five:", ", ".join(f"{item['display']} {item['jevbench_score']:.2f}" for item in ranked[:5]))
     print(f"Plumb exact v1.4.2 score: {composite:.14f}; scorer SHA-256 {SCORER_SHA256}")

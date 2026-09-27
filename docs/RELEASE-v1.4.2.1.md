@@ -24,7 +24,7 @@ Released 27 September 2026. This additive revision starts from the exact live v1
 
 - Exact live v1.4.2 base SHA-256: `fb81f4e774e7a965eff7b5bed641cff62c7e51c9b28464dca83d5d7725990fcd`.
 - Source measurement row SHA-256: `0fe248c8e2c1f267951c8d8c0fd3a480baea1cbf725caacd2911c087facda709`.
-- Corrected public row input is stored at [`results/v1.4.2.1/source/plumb-4b-latest-v1.4.3-public-row.json`](../results/v1.4.2.1/source/plumb-4b-latest-v1.4.3-public-row.json); the original aggregate row is preserved beside it.
-- The release artifact is [`results/v1.4.2.1/jevbench-v1.4.2.1-results.json`](../results/v1.4.2.1/jevbench-v1.4.2.1-results.json). Reproduction uses [`scripts/v1.4.2.1/build.py`](../scripts/v1.4.2.1/build.py).
+- Plumb aggregate-source SHA-256: `aade49ff5c86936b14ed287d6a503d3c1ba2884eb2b9f745cc8f0e4b73296165`; corrected public row input: [`results/v1.4.2.1/source/plumb-4b-latest-v1.4.3-public-row.json`](../results/v1.4.2.1/source/plumb-4b-latest-v1.4.3-public-row.json); original aggregate and release footnote are preserved beside it.
+- Result SHA-256: `e4c5ec1b510212e29cba130a7a861096623c484dab9f5ecf9893360c1e993166` at [`results/v1.4.2.1/jevbench-v1.4.2.1-results.json`](../results/v1.4.2.1/jevbench-v1.4.2.1-results.json). Family-supplement SHA-256: `968b7e6ce30e539328e42b24d1b1379f3214675b966dd3cf814dff3a74770814` at [`results/v1.4.2.1/jevbench-v1.4.2.1-family-supplement.json`](../results/v1.4.2.1/jevbench-v1.4.2.1-family-supplement.json). The supplement carries forward v1.4.2 family aggregates; no Plumb hard-tier family breakdown was available. Reproduction uses [`scripts/v1.4.2.1/build.py`](../scripts/v1.4.2.1/build.py).
 
 This revision does not include ImageJevBench or other fast-lane rows. Rows held for customer confirmation or still in measurement will be handled in a later revision.
