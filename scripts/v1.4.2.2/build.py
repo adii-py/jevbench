@@ -19,7 +19,7 @@ FAMILIES_OUTPUT = DATA / "jevbench-v1.4.2.2-family-supplement.json"
 
 BASE_SHA256 = "e4c5ec1b510212e29cba130a7a861096623c484dab9f5ecf9893360c1e993166"
 BASE_FAMILIES_SHA256 = "968b7e6ce30e539328e42b24d1b1379f3214675b966dd3cf814dff3a74770814"
-SOURCE_SHA256 = "c26650b9bedc52445d693d2d8d67f047c5a21e40c3a2abd294c5c13b6424bb61"
+SOURCE_SHA256 = "1b1755820752ba62e9910236f6dd6e18a0aa485fc0ed6990170e40cc4962f76f"
 HANDOFF_SHA256 = "51584c82047bf4392d5b05be1334775d6bfb51b2074cca682a87b1e7cdcaebf5"
 SCORER_SHA256 = "33177d06eab9f78667972ec3b20997344f70a78e16b05326453a2c31200cac79"
 EXPECTED_TOP5 = ["imajev_4b", "plumb-4b", "decider-4b-v2", "jev-1.13.0", "jevk5-v02"]
@@ -162,7 +162,9 @@ def build() -> dict:
         revision_note=(
             "v1.4.2.2 adds the verified Imajev-4B row to v1.4.2.1 using the exact live v1.4.2 "
             "scoring code. Earlier measurements and score fields are unchanged; only ranks and "
-            "preset ranks move where the new row changes the ordering."
+            "preset ranks move where the new row changes the ordering. A 28 Sep text-only "
+            "amendment clarifies that full-forward input tokens are counted once for the single "
+            "pinned server pass; no measurement, score, axis, rank, eligibility, or numeric value changed."
         ),
         top_five_note=(
             "Imajev-4B leads the JevBench Score at 67.37, ahead of Plumb-4B (65.84). "
@@ -178,7 +180,20 @@ def build() -> dict:
                     "Added Imajev-4B, measured on the full v1.4 protocol with one rotation and "
                     "calibration.json. The v1.4.2 scorer is unchanged; earlier rows are unchanged."
                 ),
-            }
+            },
+            {
+                "revision": "v1.4.2.2 cost-basis wording correction",
+                "date": "2026-09-28",
+                "note": (
+                    "Text-only correction: the Imajev-4B cost basis now states that full-forward "
+                    "input tokens are counted once for the single pinned server pass, matching the "
+                    "one-rotation run receipt. Previous v1.4.2.2 result SHA-256: "
+                    "f0dfdd8f1601cadb16864061413e6e43c8b2dfa07b10ffd0716c67fc3c4b9952. "
+                    "Previous candidate-row SHA-256: "
+                    "c26650b9bedc52445d693d2d8d67f047c5a21e40c3a2abd294c5c13b6424bb61. "
+                    "No measurement, score, axis, rank, eligibility, or numeric value changed."
+                ),
+            },
         ],
     )
 

@@ -255,7 +255,7 @@
       "cost_axis": 59.72422576086029,
       "input_usd_per_m": 0.03,
       "output_usd_per_m": 0.15,
-      "basis": "ESTIMATE: DeepInfra public model catalog for exact base Qwen/Qwen3.5-4B, retrieved 2026-09-27 00:52 UTC: USD 0.03/M input and USD 0.15/M output; see receipts/BASE-PRICE-REFERENCE.json; full-forward input tokens are counted inside each of the four pinned server passes; no generated output tokens; estimated, not charged"
+      "basis": "ESTIMATE: DeepInfra public model catalog for exact base Qwen/Qwen3.5-4B, retrieved 2026-09-27 00:52 UTC: USD 0.03/M input and USD 0.15/M output; see receipts/BASE-PRICE-REFERENCE.json; full-forward input tokens are counted once for the single pinned server pass; no generated output tokens; estimated, not charged"
     },
     "noul_by_scope": {
       "frozen_534": {
