@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.2.1 — 2026-09-27
+
+- Added Plumb-4B as the new #1 (65.84) on the live v1.4.2 base, using the exact v1.4.2 scoring code.
+- Repriced Plumb's estimated input cost at the bookable EmpirioLabs Qwen3.5-4B rate ($0.04/M); the earlier $0.03/M reference was retired.
+- Existing v1.4.2 measurements and display fields are unchanged; only score-dependent ranks move.
+
 ## v1.4.2 — 2026-09-25
 
 - Added eleven newly measured systems and completed swanOne's sealed run; all rows use the full 842-decision protocol.
