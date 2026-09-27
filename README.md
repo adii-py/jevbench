@@ -11,7 +11,24 @@ JevBench is [Benchmark Heaven](https://benchmarkheaven.com)'s own benchmark. It 
 affiliated with or endorsed by TypeSafe AI, whose Jev model is one of the systems
 measured here.
 
-## v1.4.2.1: Plumb-4B takes the top spot (current)
+## v1.4.2.2: Imajev-4B leads; Plumb-4B is #2 (current)
+
+**[Live board](https://benchmarkheaven.com/jev-models)** · [v1.4.2.2 release notes](docs/RELEASE-v1.4.2.2.md) ·
+[v1.4 method](docs/METHOD-v1.4.md) · [aggregate results](results/v1.4.2.2/jevbench-v1.4.2.2-results.json) · [changelog](CHANGELOG.md)
+
+The v1.4.2 scorer is unchanged. v1.4.2.2 adds Imajev-4B, measured on the full v1.4 protocol with one rotation and `calibration.json`, to the exact v1.4.2.1 result. The board has 95 systems, 91 ranked; prior measurement and score fields remain unchanged, with ranks moving only where the added row changes the order. Only aggregate sealed statistics are published.
+
+| Rank | System | JevBench Score |
+|---:|---|---:|
+| 1 | Imajev-4B | 67.37 |
+| 2 | Plumb-4B (crh225, JevK5 v0.2 + LoRA) | 65.84 |
+| 3 | decider-4b v2 (Mapika) | 64.13 |
+| 4 | Jev 1.13.0 (TypeSafe AI) | 63.29 |
+| 5 | JevK5 v0.2.0 | 62.04 |
+
+Imajev-4B's estimated Cost uses the public DeepInfra Qwen/Qwen3.5-4B reference price and zero generated output tokens. It is a model-price estimate, not a GPU bill.
+
+## v1.4.2.1: Plumb-4B added (previous release)
 
 **[Live board](https://benchmarkheaven.com/jev-models)** · [v1.4.2.1 release notes](docs/RELEASE-v1.4.2.1.md) ·
 [v1.4 method](docs/METHOD-v1.4.md) · [aggregate results](results/v1.4.2.1/jevbench-v1.4.2.1-results.json) · [changelog](CHANGELOG.md)
