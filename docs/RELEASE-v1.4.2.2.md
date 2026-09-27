@@ -2,6 +2,10 @@
 
 Prepared for publication on 27 September 2026. This additive revision starts from the exact v1.4.2.1 artifact and adds the requested one-rotation Imajev-4B measurement. The v1.4.2 scoring module is unchanged. Existing measurements and score fields remain unchanged; only overall and preset ranks move where Imajev changes the order.
 
+## Text-only correction (28 September 2026)
+
+The Imajev-4B Cost basis now says that full-forward input tokens are counted once for the single pinned server pass, matching the one-rotation run receipt. The previous v1.4.2.2 result artifact had SHA-256 `f0dfdd8f1601cadb16864061413e6e43c8b2dfa07b10ffd0716c67fc3c4b9952`; the original candidate-row SHA-256 recorded by the run receipt was `c26650b9bedc52445d693d2d8d67f047c5a21e40c3a2abd294c5c13b6424bb61`. This is recorded as a wording amendment to v1.4.2.2. No measurement, score, axis, rank, eligibility, or numeric value changed.
+
 ## Current top five
 
 | Rank | System | JevBench Score |
@@ -23,8 +27,8 @@ Prepared for publication on 27 September 2026. This additive revision starts fro
 
 - Exact live v1.4.2.1 base SHA-256: `e4c5ec1b510212e29cba130a7a861096623c484dab9f5ecf9893360c1e993166`.
 - v1.4.2.1 family supplement SHA-256: `968b7e6ce30e539328e42b24d1b1379f3214675b966dd3cf814dff3a74770814`.
-- Imajev source-row SHA-256: `c26650b9bedc52445d693d2d8d67f047c5a21e40c3a2abd294c5c13b6424bb61`.
-- v1.4.2.2 result SHA-256: `f0dfdd8f1601cadb16864061413e6e43c8b2dfa07b10ffd0716c67fc3c4b9952` at [`results/v1.4.2.2/jevbench-v1.4.2.2-results.json`](../results/v1.4.2.2/jevbench-v1.4.2.2-results.json).
+- Corrected Imajev source-row SHA-256: `1b1755820752ba62e9910236f6dd6e18a0aa485fc0ed6990170e40cc4962f76f`.
+- Corrected v1.4.2.2 result SHA-256: `7f39b2f742a69ded7384fb7eb4c54daa9cf67b26e72e25133c6da1f8e49cf570` at [`results/v1.4.2.2/jevbench-v1.4.2.2-results.json`](../results/v1.4.2.2/jevbench-v1.4.2.2-results.json).
 - Family supplement SHA-256: `df41a1152f32b9f32448ae0da2ea3a304d84727254650a01ab540b3a5284a078` at [`results/v1.4.2.2/jevbench-v1.4.2.2-family-supplement.json`](../results/v1.4.2.2/jevbench-v1.4.2.2-family-supplement.json).
 - Reproduction uses [`scripts/v1.4.2.2/build.py`](../scripts/v1.4.2.2/build.py). The builder's integrity assertions passed when producing this candidate; no local test suite was run.
 

@@ -5,6 +5,7 @@
 - Added Imajev-4B (#1, 67.37) to the exact live v1.4.2.1 result using the unchanged v1.4.2 scorer.
 - Preserved all prior measurement and score fields; only score-dependent ranks changed.
 - The one-rotation run used the author's pinned adapter/server, `calibration.json`, and the pinned optimized kernels.
+- 28 Sep text-only correction: the Imajev-4B cost basis now reflects the single pinned server pass. No score, axis, rank, eligibility, or numeric value changed.
 
 
 ## v1.4.2.1 — 2026-09-27
