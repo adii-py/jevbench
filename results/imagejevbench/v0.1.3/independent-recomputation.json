@@ -1,0 +1,25 @@
+{
+  "base_scorer_sha256": "d63c9f3dca2b2419fcb9b62ecfcec624e598dfe625b0216c41dca3aa18582c34",
+  "first_scored_row_sha256": "152dc8bceeaf39ebdac5ebc800c301612b8d879d41569041263b7490fca8f57b",
+  "method": "two frozen scorer passes plus separate composite recomputation",
+  "method_sha256": "e7eaa2acffb7fd9655480311b96feafd528f112452fcebb170e48ceeacd555a3",
+  "prediction_sha256": "d180bb6395875286902ece747772fa25e9159032a49297c498fdbb845a9740ff",
+  "predictions_in_receipt": false,
+  "recomputed_track_scores": {
+    "all": 76.38798675595419,
+    "core": 75.49047861959203,
+    "everyday_photo": 77.89952209964332
+  },
+  "recorded_track_scores": {
+    "all": 76.38798675595419,
+    "core": 75.49047861959203,
+    "everyday_photo": 77.89952209964332
+  },
+  "rows": 684,
+  "schema_version": 1,
+  "scorer_adapter_sha256": "7f965e8487426018fa2259e52cb0f6bd21989454ac9e61e821014afa7c5fde9a",
+  "scorer_passes_equal": true,
+  "second_scored_row_sha256": "152dc8bceeaf39ebdac5ebc800c301612b8d879d41569041263b7490fca8f57b",
+  "split_sha256": "4cb721cd36c4fbe4320ec1d5420f56bedd82e060c2c634b3fe7c420353d51224",
+  "status": "pass"
+}

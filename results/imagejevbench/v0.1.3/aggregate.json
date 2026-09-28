@@ -1,0 +1,241 @@
+{
+  "benchmark": "ImageJevBench",
+  "protocol": "v0.1 clean split / v0.1.3 fast-serving row",
+  "key": "imajev_4b",
+  "name": "Imajev-4B",
+  "kind": "gpu",
+  "gpu_usd_h": 0.67,
+  "prediction_rows": 684,
+  "prediction_sha256": "d180bb6395875286902ece747772fa25e9159032a49297c498fdbb845a9740ff",
+  "method_sha256": "e7eaa2acffb7fd9655480311b96feafd528f112452fcebb170e48ceeacd555a3",
+  "scorer_adapter_sha256": "7f965e8487426018fa2259e52cb0f6bd21989454ac9e61e821014afa7c5fde9a",
+  "base_scorer_sha256": "d63c9f3dca2b2419fcb9b62ecfcec624e598dfe625b0216c41dca3aa18582c34",
+  "split_sha256": "4cb721cd36c4fbe4320ec1d5420f56bedd82e060c2c634b3fe7c420353d51224",
+  "tracks": {
+    "all": {
+      "public": {
+        "n": 228,
+        "correct": 185,
+        "accuracy": 0.8114035087719298,
+        "chance": 0.32127192982456143,
+        "chance_corrected_intelligence": 72.21324717285944,
+        "ece": 0.07784262664433397,
+        "probability_coverage": 1.0,
+        "valid_answer_count": 228
+      },
+      "sealed": {
+        "n": 456,
+        "correct": 380,
+        "accuracy": 0.8333333333333334,
+        "chance": 0.3435672514619883,
+        "chance_corrected_intelligence": 74.61024498886415,
+        "ece": 0.031031410632512635,
+        "probability_coverage": 1.0,
+        "valid_answer_count": 456
+      },
+      "intelligence_before_penalty": 73.7712957532625,
+      "raw_overall_gap_pp": -2.1929824561403577,
+      "matched_gap_pp": -4.233851232690031,
+      "matched_gap_detail": {
+        "Everyday photo": {
+          "n_public": 89,
+          "n_sealed": 95,
+          "gap_pp": -3.7256061502069726,
+          "weight": 45.95108695652174
+        },
+        "ScreenSpot": {
+          "n_public": 20,
+          "n_sealed": 29,
+          "gap_pp": -6.206896551724128,
+          "weight": 11.83673469387755
+        }
+      },
+      "penalty_points": 0.0,
+      "penalty_multiplier": 1.0,
+      "axes": {
+        "intelligence": 73.7712957532625,
+        "calibration": 90.51693275266999,
+        "speed": 87.592397733489,
+        "cost": 61.182008216246516
+      },
+      "speed": {
+        "score": 87.592397733489,
+        "raw_p50_s": 0.09945318949758075,
+        "raw_p95_s": 0.17447172000538558,
+        "adjusted_p50_s": 0.3489063789951615,
+        "adjusted_p95_s": 0.4989434400107712,
+        "latency_coverage": 1.0
+      },
+      "cost": {
+        "score": 61.182008216246516,
+        "raw_score": 61.182008216246516,
+        "usd_per_1000": 0.019675829903842413,
+        "total_usd": 0.013458267654228211,
+        "coverage": 1.0,
+        "source": "measured GPU seconds x $0.67/GPU-hour"
+      },
+      "composite": {
+        "harmonic_before_gates": 76.38798675595419,
+        "gates": {
+          "intelligence": 1.0,
+          "speed": 1.0,
+          "cost": 1.0
+        },
+        "score": 76.38798675595419
+      }
+    },
+    "core": {
+      "public": {
+        "n": 139,
+        "correct": 104,
+        "accuracy": 0.7482014388489209,
+        "chance": 0.21762589928057555,
+        "chance_corrected_intelligence": 67.816091954023,
+        "ece": 0.11120753665960482,
+        "probability_coverage": 1.0,
+        "valid_answer_count": 139
+      },
+      "sealed": {
+        "n": 361,
+        "correct": 290,
+        "accuracy": 0.8033240997229917,
+        "chance": 0.30932594644506,
+        "chance_corrected_intelligence": 71.52406417112299,
+        "ece": 0.047555772016266214,
+        "probability_coverage": 1.0,
+        "valid_answer_count": 361
+      },
+      "intelligence_before_penalty": 70.22627389513798,
+      "raw_overall_gap_pp": -5.512266087407081,
+      "matched_gap_pp": -6.206896551724128,
+      "matched_gap_detail": {
+        "ScreenSpot": {
+          "n_public": 20,
+          "n_sealed": 29,
+          "gap_pp": -6.206896551724128,
+          "weight": 11.83673469387755
+        }
+      },
+      "penalty_points": 0.0,
+      "penalty_multiplier": 1.0,
+      "axes": {
+        "intelligence": 70.22627389513798,
+        "calibration": 86.03322207171306,
+        "speed": 88.02332483840536,
+        "cost": 63.439346589608974
+      },
+      "speed": {
+        "score": 88.02332483840536,
+        "raw_p50_s": 0.08316986800491577,
+        "raw_p95_s": 0.1741631269978825,
+        "adjusted_p50_s": 0.31633973600983156,
+        "adjusted_p95_s": 0.498326253995765,
+        "latency_coverage": 1.0
+      },
+      "cost": {
+        "score": 63.439346589608974,
+        "raw_score": 63.439346589608974,
+        "usd_per_1000": 0.016545825776969062,
+        "total_usd": 0.008272912888484531,
+        "coverage": 1.0,
+        "source": "measured GPU seconds x $0.67/GPU-hour"
+      },
+      "composite": {
+        "harmonic_before_gates": 75.49047861959203,
+        "gates": {
+          "intelligence": 1.0,
+          "speed": 1.0,
+          "cost": 1.0
+        },
+        "score": 75.49047861959203
+      }
+    },
+    "everyday_photo": {
+      "public": {
+        "n": 89,
+        "correct": 81,
+        "accuracy": 0.9101123595505618,
+        "chance": 0.48314606741573035,
+        "chance_corrected_intelligence": 82.60869565217392,
+        "ece": 0.025733385159810003,
+        "probability_coverage": 1.0,
+        "valid_answer_count": 89
+      },
+      "sealed": {
+        "n": 95,
+        "correct": 90,
+        "accuracy": 0.9473684210526315,
+        "chance": 0.47368421052631576,
+        "chance_corrected_intelligence": 89.99999999999999,
+        "ece": 0.033524974745016076,
+        "probability_coverage": 1.0,
+        "valid_answer_count": 95
+      },
+      "intelligence_before_penalty": 87.41304347826086,
+      "raw_overall_gap_pp": -3.7256061502069726,
+      "matched_gap_pp": -3.7256061502069726,
+      "matched_gap_detail": {
+        "Everyday photo": {
+          "n_public": 89,
+          "n_sealed": 95,
+          "gap_pp": -3.7256061502069726,
+          "weight": 45.95108695652174
+        }
+      },
+      "penalty_points": 0.0,
+      "penalty_multiplier": 1.0,
+      "axes": {
+        "intelligence": 87.41304347826086,
+        "calibration": 93.84041632196121,
+        "speed": 86.5566891487961,
+        "cost": 56.50118044596454
+      },
+      "speed": {
+        "score": 86.5566891487961,
+        "raw_p50_s": 0.14606132000335492,
+        "raw_p95_s": 0.17489544200361706,
+        "adjusted_p50_s": 0.44212264000670987,
+        "adjusted_p95_s": 0.49979088400723415,
+        "latency_coverage": 1.0
+      },
+      "cost": {
+        "score": 56.50118044596454,
+        "raw_score": 56.50118044596454,
+        "usd_per_1000": 0.028181275900780872,
+        "total_usd": 0.00518535476574368,
+        "coverage": 1.0,
+        "source": "measured GPU seconds x $0.67/GPU-hour"
+      },
+      "composite": {
+        "harmonic_before_gates": 77.89952209964332,
+        "gates": {
+          "intelligence": 1.0,
+          "speed": 1.0,
+          "cost": 1.0
+        },
+        "score": 77.89952209964332
+      }
+    }
+  },
+  "provenance": {
+    "model_pins": {
+      "adapter": {
+        "repo": "mohit67890/imajev-4b",
+        "revision": "c9e5f132465da85d31735ec502d5557982671a7d"
+      },
+      "server": {
+        "repo": "mohit67890/imajev",
+        "revision": "8501f5c3b1ed8ef608744eabed40f22b70de4277"
+      },
+      "base": {
+        "repo": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a"
+      }
+    },
+    "method_sha256": "e7eaa2acffb7fd9655480311b96feafd528f112452fcebb170e48ceeacd555a3",
+    "scorer_adapter_sha256": "7f965e8487426018fa2259e52cb0f6bd21989454ac9e61e821014afa7c5fde9a",
+    "base_scorer_sha256": "d63c9f3dca2b2419fcb9b62ecfcec624e598dfe625b0216c41dca3aa18582c34",
+    "split_sha256": "4cb721cd36c4fbe4320ec1d5420f56bedd82e060c2c634b3fe7c420353d51224",
+    "scored_tracks_sha256": "314b711e280975a3458bc326eee38e858fd4b080e64eae316b35b4f272ca0f85"
+  }
+}

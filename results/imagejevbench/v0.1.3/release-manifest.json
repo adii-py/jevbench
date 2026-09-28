@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "benchmark": "ImageJevBench",
+  "revision": "v0.1.3",
+  "status": "candidate",
+  "parent_revision": "v0.1.2",
+  "rank": 1,
+  "ranked_systems": 49,
+  "previous_rank": 11,
+  "previous_score": 65.72451137285294,
+  "row": {
+    "key": "imajev_4b",
+    "name": "Imajev-4B",
+    "score": 76.38798675595419,
+    "axes": {
+      "intelligence": 73.7712957532625,
+      "calibration": 90.51693275266999,
+      "speed": 87.592397733489,
+      "cost": 61.182008216246516
+    },
+    "track_scores": {
+      "all": 76.38798675595419,
+      "core": 75.49047861959203,
+      "everyday_photo": 77.89952209964332
+    }
+  },
+  "top_five": [
+    {
+      "rank": 1,
+      "key": "imajev_4b",
+      "name": "Imajev-4B",
+      "score": 76.38798675595419
+    },
+    {
+      "rank": 2,
+      "key": "jev_omni",
+      "name": "Jev-Omni",
+      "score": 73.10053647043314
+    },
+    {
+      "rank": 3,
+      "key": "neohorse_jev_4b",
+      "name": "NeoHorse Jev 4B",
+      "score": 71.93674908573261
+    },
+    {
+      "rank": 4,
+      "key": "visual_jev_4b",
+      "name": "Visual-Jev 4B Answer-SFT",
+      "score": 69.81374007618345
+    },
+    {
+      "rank": 5,
+      "key": "jpt_4b",
+      "name": "JPT-4B (kirp / llm2jev)",
+      "score": 69.54765773525537
+    }
+  ],
+  "model_pins": {
+    "adapter": {
+      "repo": "mohit67890/imajev-4b",
+      "revision": "c9e5f132465da85d31735ec502d5557982671a7d"
+    },
+    "server": {
+      "repo": "mohit67890/imajev",
+      "revision": "8501f5c3b1ed8ef608744eabed40f22b70de4277"
+    },
+    "base": {
+      "repo": "Qwen/Qwen3.5-4B",
+      "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a"
+    }
+  },
+  "serving": {
+    "server_commit": "8501f5c3b1ed8ef608744eabed40f22b70de4277",
+    "adapter_revision": "c9e5f132465da85d31735ec502d5557982671a7d",
+    "backend": "torch",
+    "rotations": 1,
+    "calibration": "calibration.json",
+    "flags": [
+      "--fast",
+      "--merge-lora"
+    ],
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "gpu_usd_per_hour": 0.67,
+    "runtime_image_id": "sha256:7f6a0e18888048de01cd31d2e130dc6f8662afdd4c0efd5edce355f83dff6424",
+    "load_seconds": 38.92882272700081,
+    "total_gpu_seconds": 72.3130799331665,
+    "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; build-essential 12.10ubuntu1"
+  },
+  "smoke_comparison": {
+    "public_items": 6,
+    "answer_indices_matching_previous_optimized_run": 6,
+    "probability_max_absolute_delta": 0.04738334201834449,
+    "cuda_graph_replay_calls": 6,
+    "profiled_fast_kernel_families": [
+      "causal_conv1d",
+      "gated_delta_rule"
+    ]
+  },
+  "method": {
+    "method_sha256": "e7eaa2acffb7fd9655480311b96feafd528f112452fcebb170e48ceeacd555a3",
+    "split_sha256": "4cb721cd36c4fbe4320ec1d5420f56bedd82e060c2c634b3fe7c420353d51224",
+    "scorer_adapter_sha256": "7f965e8487426018fa2259e52cb0f6bd21989454ac9e61e821014afa7c5fde9a",
+    "base_scorer_sha256": "d63c9f3dca2b2419fcb9b62ecfcec624e598dfe625b0216c41dca3aa18582c34",
+    "self_hosted_cost_method": "unchanged; measured GPU seconds × pinned pod hourly rate"
+  },
+  "artifacts": {
+    "aggregate_path": "results/imagejevbench/v0.1.3/aggregate.json",
+    "aggregate_sha256": "152dc8bceeaf39ebdac5ebc800c301612b8d879d41569041263b7490fca8f57b",
+    "independent_recomputation_path": "results/imagejevbench/v0.1.3/independent-recomputation.json",
+    "independent_recomputation_sha256": "4d41f30f3c73030aecca62db32cb0e1a41a71b79c17e6c58610967484d0d3551",
+    "prediction_sha256_private_receipt_only": "d180bb6395875286902ece747772fa25e9159032a49297c498fdbb845a9740ff",
+    "predictions_published": false
+  }
+}
