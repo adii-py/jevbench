@@ -7,6 +7,3 @@ raw/
 *.log
 external/
 RUN*/
-output/
-logs/
-cache/

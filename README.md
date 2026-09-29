@@ -415,6 +415,14 @@ House rules the harness enforces rather than documents:
   browser-only. They are listed with the concrete reason, and an exclusion is an
   availability fact, never a quality verdict.
 
+## Dashboard
+
+`setup.sh` and `run.sh` run this harness on the xyne-eval-ops dashboard. The eval is non-agentic: one `openai_compat` call per public item, scored by the existing runner. Copy [`input_param.json`](input_param.json) into the eval's `input_params`. Use machine type `n2-standard-2`. The fork is public (`https://github.com/adii-py/jevbench`), so the runner can clone it without an org token.
+
+`split=public` is `easy`, then `original`, then `hard` (231 items). `task_range` is an inclusive index into that list (`0-9` is 10 items). A range that runs past the end is clamped. The headline metric is public accuracy in percent, and only when every selected item was attempted. That number is not the official four-axis JevBench Score. Per-item jsonl and raw responses are written outside the checkout, because the harness refuses to store them inside the repo. `0` for either token price is treated as unset.
+
+Register the eval only after these files are on the commit you pin. The first dashboard run should be `split=easy` and `task_range=0-9`.
+
 ## Licence
 
 MIT for this harness and the 72 original public decisions. Everything else - model
