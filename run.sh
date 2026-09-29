@@ -37,14 +37,20 @@ fi
 export API_KEY
 
 MODEL="jev-latest"
-ENDPOINT="https://api.typesafe.ai"
+ENDPOINT="https://grid.ai.juspay.net"
 JEV_VERSION="v1.4.2.2"
 TASK_RANGE=""
 SPLIT=""
+DELAY_S="0.5"
+DASHBOARD_MODEL=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --model)         MODEL="${2:-}"; shift 2 ;;
+        # --model is bound by the dashboard to a chat alias (needed to pass Validate).
+        # Jev is not a chat model, so the alias actually sent to /v1/systemone is --model-alpha.
+        --model)         DASHBOARD_MODEL="${2:-}"; shift 2 ;;
+        --model-alpha)   MODEL="${2:-}"; shift 2 ;;
+        --delay-s)       DELAY_S="${2:-}"; shift 2 ;;
         --base-url)      ENDPOINT="${2:-}"; shift 2 ;;
         --endpoint)      ENDPOINT="${2:-}"; shift 2 ;;
         --jev-version)   JEV_VERSION="${2:-}"; shift 2 ;;
@@ -70,19 +76,30 @@ done
 if [ -n "$SPLIT" ]; then
     log_warn "split=${SPLIT} is ignored; ${JEV_VERSION} selects its own public cases"
 fi
+if [ -n "$DASHBOARD_MODEL" ]; then
+    log_info "dashboard model '${DASHBOARD_MODEL}' ignored; systemone model = '${MODEL}' (model_alpha)"
+fi
+if [ -z "$MODEL" ]; then
+    log_warn "model_alpha is empty; using jev-latest"
+    MODEL="jev-latest"
+fi
+case "$DELAY_S" in
+    ''|*[!0-9.]*|*.*.*) log_warn "bad delay_s '${DELAY_S}'; using 0.5"; DELAY_S="0.5" ;;
+esac
 
 OUTPUT_ROOT="${EVAL_RUNNER_OUTPUT_DIR:-${SCRIPT_DIR}/output}"
 mkdir -p "$OUTPUT_ROOT"
 RESULTS_FILE="${OUTPUT_ROOT}/${EVAL_RUN_ID}_results.json"
 
+# Per-item results, ledger, raw responses and topic-report live under repo/logs/,
+# which the runner syncs every 150s (small files: ~1 KB per case). The vendored
+# harness only refuses paths inside its own jevbench-src tree.
 if [ -n "${JEVBENCH_PRIVATE_ROOT:-}" ]; then
-    PRIVATE_ROOT="$JEVBENCH_PRIVATE_ROOT"
-elif [ -n "${EVAL_RUNNER_WORK_DIR:-}" ]; then
-    PRIVATE_ROOT="$(cd "${EVAL_RUNNER_WORK_DIR}/.." && pwd)/jevbench-private"
+    RUN_ROOT="$JEVBENCH_PRIVATE_ROOT"
 else
-    PRIVATE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)/jevbench-private"
+    RUN_ROOT="${SCRIPT_DIR}/logs/jevbench"
 fi
-TOPICS_OUT="${PRIVATE_ROOT}/${EVAL_RUN_ID}/topics"
+TOPICS_OUT="${RUN_ROOT}/${EVAL_RUN_ID}/topics"
 
 write_fallback_results() {
     [ -f "$RESULTS_FILE" ] && return 0
@@ -124,17 +141,14 @@ if [ -n "$TASK_RANGE" ]; then
     case "$end" in
         ''|*[!0-9]*) log_err "bad task_range ${TASK_RANGE}"; exit 1 ;;
     esac
-    if [ "$start" != "0" ]; then
-        log_err "jevbench-public only supports a prefix; task_range must start at 0 (got ${TASK_RANGE})"
-        exit 1
-    fi
+    start=$((10#$start)); end=$((10#$end))   # "08" is not octal
     if [ "$end" -lt "$start" ]; then
         log_err "task_range ${TASK_RANGE} has start > end"
         exit 1
     fi
-    limit=$((end + 1))
-    LIMIT_ARGS=(--limit "$limit")
-    log_info "task_range ${TASK_RANGE} -> --limit ${limit} (first ${limit} public cases)"
+    limit=$((end - start + 1))
+    LIMIT_ARGS=(--start "$start" --limit "$limit")
+    log_info "task_range ${TASK_RANGE} -> --start ${start} --limit ${limit} (cases ${start}..${end}, inclusive)"
 fi
 
 if [ -z "$API_KEY" ]; then
@@ -143,13 +157,14 @@ if [ -z "$API_KEY" ]; then
 fi
 
 log_step "Running jevbench-public"
-log_info "command: jevbench-public/run.sh --endpoint ${ENDPOINT} --model ${MODEL} --version ${JEV_VERSION} --api-key-env API_KEY --out <private>"
+log_info "command: jevbench-public/run.sh --endpoint ${ENDPOINT} --model ${MODEL} --version ${JEV_VERSION} --delay-s ${DELAY_S} --api-key-env API_KEY --out ${TOPICS_OUT}"
 # Child process only. Do not exec: this script still has to write the dashboard results file.
 if [ "${#LIMIT_ARGS[@]}" -gt 0 ]; then
     "$PUBLIC_RUN" \
         --endpoint "$ENDPOINT" \
         --model "$MODEL" \
         --version "$JEV_VERSION" \
+        --delay-s "$DELAY_S" \
         --api-key-env API_KEY \
         --out "$TOPICS_OUT" \
         "${LIMIT_ARGS[@]}"
@@ -158,13 +173,19 @@ else
         --endpoint "$ENDPOINT" \
         --model "$MODEL" \
         --version "$JEV_VERSION" \
+        --delay-s "$DELAY_S" \
         --api-key-env API_KEY \
         --out "$TOPICS_OUT"
 fi
 HARNESS_RC=$?
 log_info "jevbench-public/run.sh exit ${HARNESS_RC}"
-if [ "$HARNESS_RC" -ne 0 ]; then
-    exit "$HARNESS_RC"
+# Once cases have run, the wrapper always writes topic-report.json (an early stop is
+# reported there, not as a failure). No report means the run never started
+# (bad version/flags) — that stays a real FAILED run.
+if [ ! -f "$TOPICS_OUT/topic-report.json" ]; then
+    log_err "no topic-report.json; the eval did not start"
+    [ "$HARNESS_RC" -ne 0 ] && exit "$HARNESS_RC"
+    exit 1
 fi
 
 log_step "Writing results"
@@ -174,20 +195,25 @@ results_path, report_path = sys.argv[1:]
 report = json.load(open(report_path, encoding="utf-8"))
 whole = report["official_public_summary"]
 prov = report["provenance"]
+end = report.get("termination") or {"status": "complete", "reason": None}
 planned = whole["n_planned"]
 attempted = whole["n_attempted"]
 correct = whole["n_correct"]
 accuracy = whole["accuracy"]
-complete = attempted == planned and planned > 0 and accuracy is not None
+complete = end["status"] == "complete"
+# Accuracy over the cases attempted so far (failed requests count as wrong).
 observed = None if accuracy is None else accuracy * 100.0
-main_value = observed if complete else 0.0
+main_value = observed if observed is not None else 0.0
 secondary = {
     "n_planned": planned,
     "n_attempted": attempted,
     "n_unattempted": planned - attempted,
     "n_correct": correct,
     "n_scorable": whole.get("n_scorable"),
+    "n_failed_requests": end.get("n_failed_requests", 0),
     "complete": 1 if complete else 0,
+    "ended_abruptly": 0 if complete else 1,
+    "stop_reason": end.get("reason") or "",
 }
 if accuracy is not None:
     secondary["accuracy"] = accuracy
@@ -196,7 +222,14 @@ doc = {"metrics": {
     "main": {"name": "Public Accuracy", "value": main_value},
     "secondary": secondary,
     "additional": {
-        "status": "complete" if complete else "partial",
+        "status": "complete" if complete else "ended_abruptly",
+        "summary": (
+            f"Complete: {correct}/{attempted} correct."
+            if complete else
+            f"EVAL ENDED ABRUPTLY ({end.get('reason')}). Results cover {attempted}/{planned} cases; "
+            f"{planned - attempted} were not attempted. Public Accuracy is over the attempted cases only."
+        ),
+        "termination": end,
         "protocol": prov.get("requested_version"),
         "release_family": prov.get("release_family"),
         "public_tiers": prov.get("public_tiers"),
@@ -215,8 +248,14 @@ with open(tmp, "w", encoding="utf-8") as fh:
     json.dump(doc, fh, indent=2)
     fh.write("\n")
 os.replace(tmp, results_path)
+if not complete:
+    print(f"[run][WARN]  EVAL ENDED ABRUPTLY: {end.get('reason')}", flush=True)
 print(f"[run][OK]    Public Accuracy={main_value} correct={correct} attempted={attempted}/{planned}", flush=True)
 PY
+if [ ! -f "$RESULTS_FILE" ]; then
+    log_err "results writer failed"
+    exit 1
+fi
 trap - EXIT
 log_ok "results at $RESULTS_FILE"
 exit 0

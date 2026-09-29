@@ -417,11 +417,15 @@ House rules the harness enforces rather than documents:
 
 ## Dashboard
 
-`setup.sh` and `run.sh` run this harness on the xyne-eval-ops dashboard. The eval is non-agentic: one `openai_compat` call per public item, scored by the existing runner. Copy [`input_param.json`](input_param.json) into the eval's `input_params`. Use machine type `n2-standard-2`. The fork is public (`https://github.com/adii-py/jevbench`), so the runner can clone it without an org token.
+`setup.sh` and `run.sh` run this harness on the xyne-eval-ops dashboard. The eval is non-agentic: one `POST {base_url}/v1/systemone` call per public case (the `typesafe` adapter in the vendored `jevbench-public/` copy), run serially. Copy [`input_param.json`](input_param.json) into the eval's `input_params`. Use machine type `n2-standard-2`. The fork is public (`https://github.com/adii-py/jevbench`), so the runner can clone it without an org token.
 
-`split=public` is `easy`, then `original`, then `hard` (231 items). `task_range` is an inclusive index into that list (`0-9` is 10 items). A range that runs past the end is clamped. The headline metric is public accuracy in percent, and only when every selected item was attempted. That number is not the official four-axis JevBench Score. Per-item jsonl and raw responses are written outside the checkout, because the harness refuses to store them inside the repo. `0` for either token price is treated as unset.
+The dashboard's `model` field is bound to a Grid chat alias so the run passes Validate; `run.sh` ignores it. The model actually evaluated is `model_alpha` (default `jev-latest`), sent to `base_url` (default `https://grid.ai.juspay.net`; a trailing `/v1` or `/v1/systemone` is stripped). The Grid key arrives as `run.sh`'s first argument. `delay_s` (default 0.5) paces requests to stay under a 150 rpm key limit.
 
-Register the eval only after these files are on the commit you pin. The first dashboard run should be `split=easy` and `task_range=0-9`.
+Every run uses the 231 public cases in one fixed order: `easy` 0-47, `original` 48-119, `hard` 120-230. `task_range` is an inclusive index range into that list (`0-9` is 10 cases, `120-129` is the first 10 hard cases); an end past 230 is clamped, a start past 230 fails before any request. `split`, `cap_usd`, the token prices and `request_options` are accepted but not used.
+
+The headline metric is Public Accuracy in percent over the cases attempted; it is not the official four-axis JevBench Score. The harness stops on HTTP 401/403/429 or on 3 consecutive request errors. The run still completes: the results carry `ended_abruptly=1`, a `stop_reason` and the last errors, and accuracy covers only the attempted cases. Only a run that never starts (unknown version, bad range) is marked FAILED. Per-case results, raw responses, the ledger and `topic-report.json` are written to `logs/jevbench/<run_id>/topics/`, which the runner syncs.
+
+Register the eval only after these files are on the commit you pin. The first dashboard run should be `task_range=0-9`.
 
 ## Licence
 

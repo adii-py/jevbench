@@ -76,6 +76,43 @@ def report(topic_data, tasks, records):
     return {"official_public_summary": whole, "by_topic": rows}
 
 
+def read_records(path: Path) -> list:
+    """Per-item rows the harness fsynced so far; a torn final line is skipped."""
+    if not path.exists():
+        return []
+    records = []
+    for line in path.read_text().splitlines():
+        if line.strip():
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError:
+                print(f"WARNING: skipped unreadable results line: {line[:80]!r}", flush=True)
+    return records
+
+
+def termination(records, planned, harness_rc):
+    """Why the run ended. The harness stops on HTTP 401/403/429 or on 3 consecutive
+    request errors and leaves the remaining cases unattempted."""
+    failed = [
+        {"task_id": r["task_id"], "status_code": r.get("status_code"), "error": (r.get("error") or "")[:300]}
+        for r in records if not r.get("ok")
+    ]
+    info = {"harness_exit_code": harness_rc, "attempted": len(records), "planned": planned,
+            "n_failed_requests": len(failed), "last_errors": failed[-3:]}
+    if harness_rc == 0 and len(records) == planned:
+        return {"status": "complete", "reason": None, **info}
+    last = records[-1] if records else None
+    if last is not None and last.get("status_code") in (401, 403, 429):
+        reason = f"stopped on HTTP {last['status_code']} (access or rate limit) at case {len(records)}/{planned}"
+    elif len(records) >= 3 and not any(r.get("ok") or r.get("status_code") == 422 for r in records[-3:]):
+        reason = f"stopped after 3 consecutive request errors at case {len(records)}/{planned}"
+    elif harness_rc != 0:
+        reason = f"harness exited with code {harness_rc} after {len(records)}/{planned} cases"
+    else:
+        reason = f"harness finished after {len(records)}/{planned} cases"
+    return {"status": "ended_abruptly", "reason": reason, **info}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--endpoint", help="System One API base URL")
@@ -83,7 +120,9 @@ def main() -> int:
     parser.add_argument("--api-key-env", default="SYSTEMONE_BENCH_API_KEY", help="environment variable containing the bearer key")
     parser.add_argument("--out", type=Path, help="new output directory")
     parser.add_argument("--topic", action="append", help="run only this topic key; repeatable")
-    parser.add_argument("--limit", type=int, help="first N selected cases (smoke test)")
+    parser.add_argument("--start", type=int, default=0, help="0-based index of the first selected case to run")
+    parser.add_argument("--limit", type=int, help="run N cases from --start (smoke test)")
+    parser.add_argument("--delay-s", type=float, default=0.0, help="pause between requests (rate limits)")
     parser.add_argument("--results", type=Path, help="summarize an existing JevBench results.jsonl instead of running")
     parser.add_argument("--version", default="v1.2", help="public JevBench release profile; default v1.2")
     parser.add_argument("--list-versions", action="store_true", help="show available public JevBench profiles")
@@ -103,18 +142,27 @@ def main() -> int:
         if unknown:
             parser.error(f"unknown topic(s): {', '.join(sorted(unknown))}")
         tasks = [task for task in tasks if topic_data["public"][task.id] in args.topic]
+    if args.start < 0:
+        parser.error("--start must be >= 0")
+    if args.start >= len(tasks):
+        parser.error(f"--start {args.start} is past the last selected case (index {len(tasks) - 1})")
+    tasks = tasks[args.start:]
     if args.limit is not None:
         if args.limit < 1:
             parser.error("--limit must be positive")
         tasks = tasks[:args.limit]
-    if args.results and (args.topic or args.limit):
-        parser.error("--results expects the full public results; omit --topic and --limit")
+    if args.results and (args.topic or args.limit or args.start):
+        parser.error("--results expects the full public results; omit --topic, --start and --limit")
+    if args.delay_s < 0:
+        parser.error("--delay-s must be >= 0")
     endpoint = (args.endpoint or "").rstrip("/")
-    if endpoint.endswith("/v1/systemone"):
-        endpoint = endpoint.removesuffix("/v1/systemone")
+    # The adapter appends /v1/systemone itself; accept a bare host, a /v1 base, or the full route.
+    for suffix in ("/v1/systemone", "/v1"):
+        endpoint = endpoint.removesuffix(suffix)
     out = args.out or ROOT / "runs" / f"jevbench-{profile.requested}-topics-{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}"
     out = out.resolve()
     out.mkdir(parents=True, exist_ok=False)
+    harness_rc = 0
     if args.results:
         records = [json.loads(line) for line in args.results.read_text().splitlines() if line.strip()]
     else:
@@ -131,12 +179,21 @@ def main() -> int:
             "--key-env", args.api_key_env, "--results", str(out / "results.jsonl"),
             "--ledger", str(out / "ledger.jsonl"), "--raw-dir", str(out / "raw"),
             "--reserve-usd", "0", "--cap-usd", "1000", "--cost-basis", "local_endpoint",
-            "--manifest", str(out / "run-manifest.json"),
+            "--manifest", str(out / "run-manifest.json"), "--delay-s", str(args.delay_s),
         ]
         print(f"Running {len(tasks)} public JevBench cases against {endpoint} -> {out}", flush=True)
-        subprocess.run(command, env=env, check=True)
-        records = [json.loads(line) for line in (out / "results.jsonl").read_text().splitlines() if line.strip()]
+        # cwd=UPSTREAM: `-m` puts the cwd first on sys.path, so launching from a checkout
+        # that has its own jevbench/ package would silently run that copy, not the vendored one.
+        # check=False: an early stop must still yield a report over the cases already scored.
+        harness_rc = subprocess.run(command, env=env, cwd=str(UPSTREAM), check=False).returncode
+        records = read_records(out / "results.jsonl")
+    end = termination(records, len(tasks), harness_rc)
+    if end["status"] != "complete":
+        print(f"EVAL ENDED ABRUPTLY: {end['reason']}", flush=True)
+        for err in end["last_errors"]:
+            print(f"  last error: {err['task_id']} HTTP {err['status_code']}: {err['error']}", flush=True)
     result = report(topic_data, tasks, records)
+    result["termination"] = end
     result["provenance"] = {
         "scope": "public JevBench task subset only; not an official ranked score",
         "requested_version": profile.requested,
@@ -154,7 +211,9 @@ def main() -> int:
         accuracy = f"{row['accuracy']:.1%}" if row["accuracy"] is not None else "—"
         print(f"{row['label']:<24} {row['correct']:>3}/{row['attempted']:<3} {accuracy}")
     whole = result["official_public_summary"]
-    print(f"Public overall: {whole['n_correct']}/{whole['n_scorable']} = {whole['accuracy']:.2%}; report: {out / 'topic-report.json'}")
+    accuracy = f"{whole['accuracy']:.2%}" if whole["accuracy"] is not None else "—"
+    print(f"Public overall: {whole['n_correct']}/{whole['n_scorable']} = {accuracy} "
+          f"({whole['n_attempted']}/{whole['n_planned']} attempted); report: {out / 'topic-report.json'}", flush=True)
     return 0
 
 
