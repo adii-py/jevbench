@@ -2,15 +2,15 @@
   "fields": [
     {
       "name": "model",
-      "label": "Model",
-      "description": "Bound by the dashboard to the selected model version's Grid chat alias (needed to pass Validate). Ignored by run.sh: Jev is not a chat model. The model actually evaluated is model_alpha.",
+      "label": "Model (dashboard Validate)",
+      "description": "Grid chat alias the dashboard binds so Validate passes. run.sh receives --model and ignores this value for scoring (Jev uses System One, not /v1/chat/completions). Set to any allowed chat model id on your key.",
       "type": "text",
       "required": true
     },
     {
       "name": "model_alpha",
-      "label": "Model Alpha",
-      "description": "The System One model sent to {base_url}/v1/systemone, e.g. jev-latest. This is the model being evaluated.",
+      "label": "Model Alpha (evaluated)",
+      "description": "Required. System One model id sent to {base_url}/v1/systemone via --model-alpha. Example: jev-latest. This is the model JevBench scores.",
       "type": "text",
       "required": true,
       "default": "jev-latest"
@@ -18,7 +18,7 @@
     {
       "name": "base_url",
       "label": "Endpoint",
-      "description": "System One host. The runner posts to {base_url}/v1/systemone; a trailing /v1 or /v1/systemone is stripped.",
+      "description": "System One host (--base-url). Runner posts to {base_url}/v1/systemone; trailing /v1 or /v1/systemone is stripped.",
       "type": "text",
       "required": false,
       "default": "https://grid.ai.juspay.net"
@@ -26,18 +26,38 @@
     {
       "name": "jev_version",
       "label": "JevBench version",
-      "description": "Public release profile passed to jevbench-public. v1.4.2.2 uses the 231 published public cases.",
+      "description": "Public release profile (--jev-version). v1.4.2.2 runs 231 public cases (easy + original + hard).",
       "type": "text",
       "required": false,
       "default": "v1.4.2.2"
     },
     {
-      "name": "split",
-      "label": "Split",
-      "description": "Public items only. public concatenates easy, then original, then hard (231 items) so task_range indexes are stable.",
+      "name": "task_range",
+      "label": "Task range",
+      "description": "Inclusive start-end on the 231-case list (--task-range). Smoke test: 0-9 (10 cases). Full run: leave empty. Indices: easy 0-47, original 48-119, hard 120-230. End past 230 is clamped.",
       "type": "text",
       "required": false,
-      "default": "easy",
+      "default": ""
+    },
+    {
+      "name": "delay_s",
+      "label": "Delay between requests (seconds)",
+      "description": "Serial pause between cases (--delay-s). Default 0.5 helps stay under a 150 rpm key limit.",
+      "type": "number",
+      "required": false,
+      "default": 0.5,
+      "constraints": {
+        "min": 0,
+        "max": 5
+      }
+    },
+    {
+      "name": "split",
+      "label": "Split (informational)",
+      "description": "Ignored by run.sh. All runs use the full v1.4.2.2 public ordering; use task_range to slice that list.",
+      "type": "text",
+      "required": false,
+      "default": "public",
       "options": [
         "easy",
         "original",
@@ -46,32 +66,9 @@
       ]
     },
     {
-      "name": "task_range",
-      "label": "Task range",
-      "description": "Inclusive index range into the 231 public cases (easy 0-47, original 48-119, hard 120-230), e.g. 0-9 or 50-100. An end past 230 is clamped. Leave empty to run all 231.",
-      "type": "text",
-      "required": false,
-      "default": "",
-      "constraints": {
-        "regex": "^[0-9]+-[0-9]+$"
-      }
-    },
-    {
-      "name": "delay_s",
-      "label": "Delay between requests (seconds)",
-      "type": "number",
-      "required": false,
-      "default": 0.5,
-      "constraints": {
-        "min": 0,
-        "max": 5
-      },
-      "description": "Pause between requests. Requests are serial; 0.5 keeps a 150 rpm key under its limit. A 401/403/429 or 3 consecutive request errors ends the eval early with the results so far."
-    },
-    {
       "name": "cap_usd",
       "label": "Budget cap (USD)",
-      "description": "Shared ledger cap. Unknown prices reserve $0.02 per decision. A run that hits the cap stops; remaining items stay unattempted.",
+      "description": "Ignored by run.sh (vendored harness uses its own ledger cap). Kept for dashboard parity with other evals.",
       "type": "number",
       "required": false,
       "default": 15,
@@ -83,7 +80,7 @@
     {
       "name": "input_token_price",
       "label": "Input Token Price (USD per 1M tokens)",
-      "description": "Optional. Both prices must be greater than 0 or the run stays token-only and cost_usd stays null. 0 is treated as unset.",
+      "description": "Ignored by run.sh.",
       "type": "number",
       "required": false,
       "constraints": {
@@ -93,7 +90,7 @@
     {
       "name": "output_token_price",
       "label": "Output Token Price (USD per 1M tokens)",
-      "description": "Optional pair to input_token_price. A partial pair is ignored.",
+      "description": "Ignored by run.sh.",
       "type": "number",
       "required": false,
       "constraints": {
@@ -103,7 +100,7 @@
     {
       "name": "request_options",
       "label": "Request options JSON",
-      "description": "Optional JSON object merged into the chat request. A null value removes that field. Example: {\"response_format\": {\"type\": \"json_object\"}}",
+      "description": "Ignored by run.sh (System One adapter, not OpenAI chat completions).",
       "type": "text",
       "required": false,
       "default": ""
